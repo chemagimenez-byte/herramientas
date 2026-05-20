@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Multi Trace Tool</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="container">
+<header class="header">
+<h1>Multi Trace Tool</h1>
+<p>Inyección de trazabilidad para paquetes SCORM de distintos sistemas.</p>
+</header>
+
+<section class="panel">
+<div class="dropzone" id="dropzone">
+<input type="file" id="fileInput" accept=".zip" multiple hidden>
+<p><strong>Arrastra aquí los paquetes SCORM</strong></p>
+<p>o</p>
+<button type="button" id="selectBtn">Seleccionar archivos</button>
+</div>
+
+<div class="options">
+<label>
+<input type="checkbox" id="debugMode">
+Activar debug en consola
+</label>
+<label>
+<input type="checkbox" id="forceReinject">
+Forzar reinyección si ya existe parche
+</label>
+<label>
+<input type="checkbox" id="strictMode">
+Modo estricto de validación
+</label>
+</div>
+
+<div class="actions">
+<button type="button" id="processBtn" disabled>Procesar paquetes</button>
+<button type="button" id="downloadAllBtn" class="success" disabled>Descargar todos</button>
+<button type="button" id="downloadEachBtn" class="warning" disabled>Descargar individuales</button>
+<button type="button" id="clearBtn" class="secondary">Limpiar</button>
+</div>
+</section>
+
+<section class="panel" id="progressPanel" hidden>
+<h2>Progreso</h2>
+<div class="progress-wrap" aria-label="Progreso del procesado">
+  <div id="progressBar" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:0%"></div>
+</div>
+<div id="progressText" class="progress-text"></div>
+</section>
+
+<section class="panel">
+<h2>Archivos seleccionados</h2>
+<div id="fileList" class="file-list empty">No hay archivos cargados.</div>
+</section>
+
+<section class="panel">
+<h2>Resultados</h2>
+<div id="results" class="results empty">Todavía no se ha procesado ningún archivo.</div>
+</section>
+
+<section class="panel">
+<h2>Log</h2>
+<pre id="logBox" class="log-box"></pre>
+</section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+if (typeof JSZip === "undefined") {
+  var script = document.createElement("script");
+  script.src = "libs/jszip.min.js";
+  document.head.appendChild(script);
+}
+</script>
+
+<script src="js/config.js"></script>
+<script src="js/state.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/ui.js"></script>
+
+<script src="js/core/trace-registry.js"></script>
+<script src="js/core/zip.js"></script>
+<script src="js/core/downloads.js"></script>
+<script src="js/core/pipeline.js"></script>
+
+<script src="js/patches/rise-trace.js"></script>
+<script src="js/patches/storyline-trace.js"></script>
+<script src="js/patches/exelearning-trace.js"></script>   <!-- NUEVO -->
+
+<script src="js/detectors/rise.js"></script>
+<script src="js/detectors/storyline.js"></script>
+<script src="js/detectors/exelearning.js"></script>       <!-- NUEVO -->
+
+<script src="js/adapters/rise-adapter.js"></script>
+<script src="js/adapters/storyline-adapter.js"></script>
+<script src="js/adapters/exelearning-adapter.js"></script> <!-- NUEVO -->
+
+<script src="js/bootstrap/register-adapters.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
