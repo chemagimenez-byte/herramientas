@@ -1,5 +1,9 @@
 (function () {
-  const config = window.MultiTraceConfig;
+  // Configuración interna por defecto (no depende de MultiTraceConfig)
+  const config = {
+    patchSignaturePrefix: 'MAINJOBS',
+    patchVersion: '1.0.0'
+  };
 
   const PATCH_START = `<!-- ${config.patchSignaturePrefix} TRANSLATION v${config.patchVersion} START -->`;
   const PATCH_END = `<!-- ${config.patchSignaturePrefix} TRANSLATION v${config.patchVersion} END -->`;
