@@ -1,0 +1,17 @@
+```
+# Dependencies
+node_modules/
+
+# Editor/IDE files
+.vscode/
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Environment
+.env
+.env.local
+*.env.*
+```
