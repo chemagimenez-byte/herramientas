@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SCORM Translator Tool</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  /* Estilos específicos para el traductor */
+  .translator-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+
+  .translator-options label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .translator-options select {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  .translator-options .option-group {
+    background: #f5f5f5;
+    padding: 0.75rem;
+    border-radius: 4px;
+  }
+
+  .translator-options .option-group h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  .language-badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    background: #e0e0e0;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    margin-left: 0.25rem;
+  }
+
+  .language-badge.regional {
+    background: #c0d0ff;
+  }
+
+  .translation-progress {
+    margin-top: 1rem;
+  }
+
+  .translation-progress .file-progress {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    background: #f9f9f9;
+    border-radius: 4px;
+  }
+
+  .service-status {
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+
+  .service-status.connected {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .service-status.disconnected {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .service-status.connecting {
+    background: #fff3cd;
+    color: #856404;
+  }
+</style>
+</head>
+<body>
+<main class="container">
+<header class="header">
+<h1>SCORM Translator Tool</h1>
+<p>Traducción automática de paquetes SCORM (RISE, Storyline, eXeLearning) usando servicios gratuitos.</p>
+</header>
+
+<section class="panel">
+<div class="dropzone" id="dropzone">
+<input type="file" id="fileInput" accept=".zip" multiple hidden>
+<p><strong>Arrastra aquí los paquetes SCORM</strong></p>
+<p>o</p>
+<button type="button" id="selectBtn">Seleccionar archivos</button>
+</div>
+
+<div class="translator-options">
+  <div class="option-group">
+    <h4>Idioma de origen</h4>
+    <label>
+      <select id="sourceLang">
+        <option value="auto">Detectar automáticamente</option>
+        <!-- Se llenará dinámicamente -->
+      </select>
+    </label>
+  </div>
+
+  <div class="option-group">
+    <h4>Idioma de destino</h4>
+    <label>
+      <select id="targetLang">
+        <!-- Se llenará dinámicamente -->
+      </select>
+    </label>
+  </div>
+
+  <div class="option-group">
+    <h4>Opciones</h4>
+    <label>
+      <input type="checkbox" id="forceRetranslate">
+      Forzar re-traducción si ya existe
+    </label>
+  </div>
+</div>
+
+<div id="serviceStatus" class="service-status connecting">
+  Detectando servicio de traducción disponible...
+</div>
+
+<div class="actions">
+<button type="button" id="translateBtn" disabled>Traducir paquetes</button>
+<button type="button" id="downloadAllBtn" class="success" disabled>Descargar todos</button>
+<button type="button" id="downloadEachBtn" class="warning" disabled>Descargar individuales</button>
+<button type="button" id="clearBtn" class="secondary">Limpiar</button>
+</div>
+</section>
+
+<section class="panel" id="progressPanel" hidden>
+<h2>Progreso de traducción</h2>
+<div class="progress-wrap" aria-label="Progreso de la traducción">
+  <div id="progressBar" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:0%"></div>
+</div>
+<div id="progressText" class="progress-text"></div>
+<div id="fileProgress" class="translation-progress"></div>
+</section>
+
+<section class="panel">
+<h2>Archivos seleccionados</h2>
+<div id="fileList" class="file-list empty">No hay archivos cargados.</div>
+</section>
+
+<section class="panel">
+<h2>Resultados</h2>
+<div id="results" class="results empty">Todavía no se ha procesado ningún archivo.</div>
+</section>
+
+<section class="panel">
+<h2>Log</h2>
+<pre id="logBox" class="log-box"></pre>
+</section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+if (typeof JSZip === "undefined") {
+  var script = document.createElement("script");
+  script.src = "libs/jszip.min.js";
+  document.head.appendChild(script);
+}
+</script>
+
+<!-- Módulos base compartidos -->
+<script src="../js/config.js"></script>
+<script src="../js/state.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/ui.js"></script>
+<script src="../js/core/downloads.js"></script>
+
+<!-- Detectores existentes -->
+<script src="../js/detectors/rise.js"></script>
+<script src="../js/detectors/storyline.js"></script>
+<script src="../js/detectors/exelearning.js"></script>
+
+<!-- Módulos del traductor -->
+<script src="translation-service.js"></script>
+<script src="translator-patch.js"></script>
+<script src="translator-core.js"></script>
+
+<!-- Aplicación del traductor -->
+<script src="translator-app.js"></script>
+
+</body>
+</html>
